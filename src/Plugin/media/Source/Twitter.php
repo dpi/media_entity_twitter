@@ -137,6 +137,7 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
         'image' => $this->t('Link to the twitter image'),
         'image_local' => $this->t('Copies tweet image to the local filesystem and returns the URI.'),
         'image_local_uri' => $this->t('Gets URI of the locally saved image.'),
+        'image_fid' => $this->t('Map the locally saved object file id to an image field.'),
         'content' => $this->t('This tweet content'),
         'retweet_count' => $this->t('Retweet count for this tweet'),
         'profile_image_url_https' => $this->t('Link to profile image'),
@@ -229,6 +230,19 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
             return $this->getLocalImageUri($matches['id'], $media, $image_url);
           }
           return NULL;
+
+        case 'image_fid':
+          $local_uri = $this->getMetadata($media, 'image_local');
+
+          if ($local_uri && file_exists($local_uri)) {
+            $result = \Drupal::entityQuery('file')
+              ->condition('uri', $local_uri)
+              ->execute();
+            if (!empty($result)) {
+              return reset($result);
+            }
+          }
+          return FALSE;
 
         case 'content':
           if (isset($tweet['text'])) {
