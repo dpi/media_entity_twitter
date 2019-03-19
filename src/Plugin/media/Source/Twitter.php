@@ -242,7 +242,7 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
               return reset($result);
             }
           }
-          return FALSE;
+          return NULL;
 
         case 'content':
           if (isset($tweet['text'])) {
